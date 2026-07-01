@@ -1,0 +1,47 @@
+{
+  "info": {
+    "name": "Spotflow Integrations",
+    "description": "Wallet Pay-In (funding) and Payout (withdrawal) API backed by Spotflow. Set the `baseUrl` collection variable before running.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "userId", "value": "user_123" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "Fund Wallet (Pay-In)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"amount\": 1000,\n  \"accountName\": \"Test User\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/wallet/fund", "host": ["{{baseUrl}}"], "path": ["wallet", "fund"] },
+        "description": "Creates a temporary Spotflow virtual account and records a PENDING pay-in. The wallet is credited later, when the webhook confirms payment."
+      }
+    },
+    {
+      "name": "Withdraw (Payout)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"amount\": 500,\n  \"destination\": {\n    \"accountNumber\": \"0123456789\",\n    \"accountName\": \"John Doe\",\n    \"bankCode\": \"058\"\n  },\n  \"narration\": \"Prize payout\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/wallet/withdraw", "host": ["{{baseUrl}}"], "path": ["wallet", "withdraw"] },
+        "description": "Atomically deducts the balance (rejects overdraw) and initiates a Spotflow disbursement. Refunds the wallet if Spotflow rejects the transfer."
+      }
+    }
+  ]
+}
