@@ -17,7 +17,7 @@ const transactionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Reconciliation worker scans by status + age
+
 transactionSchema.index({ status: 1, createdAt: 1 });
 
 export const Transaction = mongoose.model('Transaction', transactionSchema);
